@@ -417,4 +417,5 @@ That usually means:
 
 
 ---
-[Home](index.md)
+
+[Home](index.md) | [Week 3](week3.md)
