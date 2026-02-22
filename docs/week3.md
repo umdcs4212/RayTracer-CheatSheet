@@ -52,7 +52,7 @@ defaultCamRayColors.png
 
 The image should look something like this - 
 
-![defaultCamRayColors](../images/defaultCamRayColors.png)
+![defaultCamRayColors](images/defaultCamRayColors.png)
 
 ---
 

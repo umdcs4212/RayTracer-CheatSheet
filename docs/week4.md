@@ -69,15 +69,14 @@ This is the fundamental loop of ray tracing.
 ---
 
 
-### Hit record (HitStruct)
+### Hit record (HitStruct) {You can also add this in the next week where we introduce shading}
 
 The hit structure typically stores:
 
 - intersection parameter `t`
 - hit point
-- a color
+- Shape info
 - surface normal (later)
-- possibly material info (later)
 
 This allows the renderer to:
 
@@ -122,11 +121,13 @@ The following are example snippets matching this week’s structure. Your design
 ```cpp
 #include "vec3.h"
 
+class Shape;
+
 struct HitStruct
 {
     float t;
     vec3 point;
-    vec3 color;
+    const Shape* shape = nullptr;
 };
 ```
 
@@ -139,11 +140,13 @@ struct HitStruct
 
 #include "HitStruct.h"
 #include "ray.h"
+#include "vec3.h"
 
 class Shape
 {
 public:
     virtual bool intersect(const ray& r, float t_min, float& t_max, HitStruct& hit) const = 0;
+    virtual vec3 getColor() const = 0;
 };
 ```
 
@@ -166,6 +169,7 @@ public:
     Sphere(vec3 c, float r, vec3 col): center(c), radius(r), color(col) {}
 
     bool intersect(const ray& r, float t_min, float& t_max, HitStruct& hit) const override;
+    vec3 getColor() const override;
 private:
     vec3 center;
     float radius;
@@ -201,7 +205,7 @@ bool Sphere::intersect(const ray& r, float t_min, float& t_max, HitStruct& hit) 
         t_max = t1;
         hit.t = t1;
         hit.point = r.at(t1);
-        hit.color = color;
+        hit.shape = this;
         return true;
     }
 
@@ -209,12 +213,16 @@ bool Sphere::intersect(const ray& r, float t_min, float& t_max, HitStruct& hit) 
         t_max = t2;
         hit.t = t2;
         hit.point = r.at(t2);
-        hit.color = color;
+        hit.shape = this;
         return true;
     }
 
     return false;
+}
 
+vec3 Sphere::getColor() const
+{
+    return color;
 }
 ```
 
@@ -233,6 +241,7 @@ public:
     Triangle(const vec3& a, const vec3& b, const vec3& c, const vec3& col) : vertex_a(a), vertex_b(b), vertex_c(c), color(col) {}
 
     bool intersect(const ray& r, float t_min, float& t_max, HitStruct& hit) const override;
+    vec3 getColor() const override;
 private:
     vec3 vertex_a, vertex_b, vertex_c;
     vec3 color;
@@ -292,9 +301,14 @@ bool Triangle::intersect(const ray &r, float t_min, float &t_max, HitStruct &hit
   t_max = t;
   hit.t = t;
   hit.point = r.at(t);
-  hit.color = color;
+  hit.shape = this;
 
   return true;
+}
+
+vec3 Triangle::getColor() const
+{
+  return color;
 }
 ```
 
@@ -336,7 +350,7 @@ vec3 computeRayColor(const ray &r, const std::vector<std::shared_ptr<Shape>> &sh
   }
 
   if (hitAnything) {
-    return closestHit.color;
+    return closestHit.shape->getColor();
   }
 
   // Background color
