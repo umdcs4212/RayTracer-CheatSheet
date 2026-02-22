@@ -317,4 +317,4 @@ int main(int argc, char *argv[])
 ---
 
 
-[Week2](week2.md) | [Home](index.md)
+[Week2](week2.md) | [Home](index.md) | [Week4](week4.md)
