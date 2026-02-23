@@ -44,9 +44,9 @@ When you run your Week 4 program, you should produce an image where:
 
 Given the scenes on Canvas (and on fbMain.cpp below), you should be able to generate some images like below
 
-![spheres](../images/spheres.png)
+![spheres](images/spheres.png)
 
-![triangles](../images/triangles.png)
+![triangles](images/triangles.png)
 
 ---
 
@@ -440,4 +440,4 @@ Common causes:
 
 
 
-[Week3](week3.md) | [Home](index.md)
+[Week3](week3.md) | [Home](index.md) | [Week5](week5.md)
