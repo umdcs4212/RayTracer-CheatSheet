@@ -560,4 +560,4 @@ However:
 
 ---
 
-[Week4](week4.md) | [Home](index.md)
+[Week4](week4.md) | [Home](index.md) | [Week6](week6.md)
