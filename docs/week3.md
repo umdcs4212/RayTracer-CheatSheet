@@ -70,6 +70,15 @@ The following are example snippets matching this week’s structure. Your design
 
 ### ray.h
 
+**Steps:**
+- Create a ray class that stores an origin point and a direction vector
+- Provide a constructor that takes both origin and direction
+- Implement the `at(t)` method to compute a point along the ray: $P(t) = O + t \cdot D$
+- Provide getter methods for origin and direction
+
+<details>
+<summary>Click to expand ray.h</summary>
+
 ```cpp
 #ifndef RAY_H
 #define RAY_H
@@ -97,9 +106,22 @@ class ray {
 #endif
 ```
 
+</details>
+
 ---
 
 ### Camera.h
+
+**Steps:**
+- Create an abstract base class for cameras
+- Store camera position (`pos`) and orthonormal basis vectors (`U`, `V`, `W`)
+- Store focal length and image plane dimensions
+- Store the number of pixels in x and y directions (`nx`, `ny`)
+- Declare a pure virtual `generateRay(i, j)` method that subclasses must implement
+- Provide multiple constructors with different parameter combinations
+
+<details>
+<summary>Click to expand Camera.h</summary>
 
 ```cpp
 #pragma once
@@ -133,9 +155,24 @@ protected:
 };
 ```
 
+</details>
+
 ---
 
 ### Camera.cpp
+
+**Steps:**
+- Implement three constructors with different parameter combinations:
+  - Default constructor: initializes with standard values and 100×100 resolution
+  - Constructor with pixel counts: uses standard camera setup but custom resolution
+  - Full constructor: sets up custom position, view direction, focal length, and plane dimensions
+- In the full constructor:
+  - Compute the `W` basis vector as the negative unit vector of the view direction
+  - Handle the edge case where the up vector is nearly parallel to the view direction
+  - Compute `U` and `V` using cross products to form an orthonormal basis
+
+<details>
+<summary>Click to expand Camera.cpp</summary>
 
 ```cpp
 #include "Camera.h"
@@ -188,9 +225,20 @@ Camera::Camera(vec3 position, vec3 viewDir, vec3 upDir, float focal_length, floa
 }
 ```
 
+</details>
+
 ---
 
-### PerspectiveCamera.h / PerspectiveCamera.cpp
+### PerspectiveCamera.h
+
+**Steps:**
+- Create a `PerspectiveCamera` class that inherits from `Camera`
+- Store the left, right, top, and bottom bounds of the image plane
+- Provide multiple constructors matching the parent class variants
+- Override the `generateRay(i, j)` method to compute rays through the image plane
+
+<details>
+<summary>Click to expand PerspectiveCamera.h</summary>
 
 ```cpp
 #pragma once
@@ -210,6 +258,24 @@ private:
     float left, right, top, bottom;
 };
 ```
+
+</details>
+
+### PerspectiveCamera.cpp
+
+**Steps:**
+- Implement all three constructors:
+  - Initialize image plane bounds centered at the origin: left = -width/2, right = width/2, bottom = -height/2, top = height/2
+  - Call parent constructor with appropriate parameters
+- Implement `generateRay(i, j)`:
+  - Convert pixel indices to normalized coordinates on the image plane
+  - Use 0.5 offset for pixel center sampling
+  - Map pixel coordinates to world space using the camera's basis vectors
+  - Compute ray direction: $\vec{d} = -f \cdot W + u \cdot U + v \cdot V$
+  - Return a ray with the camera position as origin and the computed direction
+
+<details>
+<summary>Click to expand PerspectiveCamera.cpp</summary>
 
 ```cpp
 #include "PerspectiveCamera.h"
@@ -251,11 +317,27 @@ ray PerspectiveCamera::generateRay(int i, int j)
 }
 ```
 
+</details>
+
 ---
 
 ### fbMain.cpp
 
-The idea: generate one ray per pixel, then map ray direction to a visible color.
+**Steps:**
+- Implement `computeRayColor` function that maps ray direction to a visible color:
+  - Normalize the ray direction
+  - Compute a parameter `a` based on the y-component: $a = 0.5 \cdot (d_y + 1.0)$
+  - Blend between white and light blue: $(1-a) \cdot \text{white} + a \cdot \text{blue}$
+- In main:
+  - Create a framebuffer and camera
+  - Loop over all pixels
+  - Generate one ray per pixel using the camera
+  - Compute the color for each ray
+  - Store the result in the framebuffer
+  - Export the framebuffer to a PNG image
+
+<details>
+<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 #include <iostream>
@@ -294,6 +376,8 @@ int main(int argc, char *argv[])
   return 0;
 }
 ```
+
+</details>
 
 ---
 

@@ -75,6 +75,17 @@ The following are the code snippets that you might follow to get a working frame
 
 ### vec3.h
 
+**Steps:**
+- Create a `vec3` class that stores three floating-point coordinates (x, y, z)
+- Implement vector arithmetic operations: addition, subtraction, scalar multiplication, and division
+- Implement vector operations: dot product, cross product, length, and normalization
+- Provide accessor methods for x, y, z components
+- Create a `point3` type alias for geometric clarity
+- Implement utility functions for vector math operations
+
+<details>
+<summary>Click to expand vec3.h</summary>
+
 ```cpp
 #ifndef VEC3_H
 #define VEC3_H
@@ -177,7 +188,17 @@ inline vec3 unit_vector(const vec3& v) {
 #endif
 ```
 
+</details>
+
 ### color.h
+
+**Steps:**
+- Create a `color` type alias for `vec3` to improve code semantics
+- Implement a `write_color` utility function that converts color components from [0,1] range to [0,255] byte range
+- This function will be useful for writing colors to image formats (you can always use vec3, as I did in the later weeks)
+
+<details>
+<summary>Click to expand color.h</summary>
 
 ```cpp
 #ifndef COLOR_H
@@ -206,7 +227,19 @@ inline void write_color(std::ostream& out, const color& pixel_color) {
 #endif
 ```
 
+</details>
+
 ### Framebuffer.h
+
+**Steps:**
+- Create a `Framebuffer` class that stores pixel colors in a 2D array (represented as a 1D vector)
+- Provide constructors with default dimensions and custom dimensions
+- Implement methods to clear the framebuffer to a solid color or gradient
+- Implement methods to set individual pixel colors by (i, j) coordinates or linear index
+- Implement the `exportToPNG` method to save the framebuffer to a PNG file
+
+<details>
+<summary>Click to expand Framebuffer.h</summary>
 
 ```cpp
 #pragma once
@@ -234,7 +267,19 @@ class Framebuffer {
 };
 ```
 
+</details>
+
 ### Framebuffer.cpp
+
+**Steps:**
+- Implement constructors that initialize the framebuffer with a width, height, and storage vector
+- Implement `clearToColor`: fill all pixels with a single color
+- Implement `clearToGradient`: fill the framebuffer with a linear interpolation between two colors
+- Implement pixel setters: both by 2D (i, j) coordinates and by linear index
+- Implement `exportToPNG`: convert color values to PNG pixels and write to file using png++ library
+
+<details>
+<summary>Click to expand Framebuffer.cpp</summary>
 
 ```cpp
 #include "Framebuffer.h"
@@ -301,7 +346,18 @@ void Framebuffer::exportToPNG(const std::string &filename)
 }
 ```
 
+</details>
+
 ### fbMain.cpp
+
+**Steps:**
+- Create a framebuffer with desired dimensions
+- Define two colors (red and blue)
+- Fill the framebuffer with a gradient from one color to another
+- Export the framebuffer to a PNG file
+
+<details>
+<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 #include <iostream>
@@ -322,7 +378,21 @@ int main(int argc, char *argv[])
 }
 ```
 
+</details>
+
 ### CMakeLists.txt
+
+**Steps:**
+- Define a library target `cs4212-util` that contains utility code:
+  - Include vec3.h, color.h, and Framebuffer implementation
+  - Link required dependencies (Boost, GLM)
+- Define an executable target `fbMain` that:
+  - Links against the `cs4212-util` library
+  - Links required libraries for PNG export (PNG::PNG, ZLIB::ZLIB)
+- Ensure all necessary libraries are properly configured
+
+<details>
+<summary>Click to expand CMakeLists.txt</summary>
 
 ```txt
 add_library (cs4212-util
@@ -347,6 +417,8 @@ target_link_libraries(fbMain PRIVATE ZLIB::ZLIB)
 
 
 ```
+
+</details>
 
 
 ## What your program should produce

@@ -122,6 +122,14 @@ Your design can differ, as long as it meets the Week 6 checklist.
 
 ### Shader.h (updated function signature to properly accommodate all the shader functionalities)
 
+**Steps:**
+- Update the `rayColor` virtual method signature to accept references to ray, lights and shapes
+- Add a `depth` parameter to control recursion depth
+- This allows shaders to spawn recursive rays and access the scene for computations
+
+<details>
+<summary>Click to expand Shader.h</summary>
+
 ```cpp
 //...
 
@@ -136,9 +144,19 @@ public:
 };
 ```
 
+</details>
+
 ---
 
 ### RayTracer.h / RayTracer.cpp (Re-structured the computeRayColor method)
+
+**Steps:**
+- Move the `computeRayColor` method from your main file to a separate file so that both the reflective shaders and the main file have access to it
+
+**RayTracer.h header:**
+
+<details>
+<summary>Click to expand RayTracer.h</summary>
 
 ```cpp
 #pragma once
@@ -156,6 +174,13 @@ vec3 computeRayColor(const ray &r,
   const std::vector<std::shared_ptr<PointLight>> &lights,
   int depth);
 ```
+
+</details>
+
+**RayTracer.cpp**
+
+<details>
+<summary>Click to expand RayTracer.cpp</summary>
 
 ```cpp
 #include "RayTracer.h"
@@ -209,9 +234,20 @@ vec3 computeRayColor(const ray &r,
 }
 ```
 
+</details>
+
 ---
 
 ### LambertianShader.cpp / BlinnPhongShader.cpp (shadow rays)
+
+**Steps:**
+- For each light in the scene, cast a shadow ray from the hit point toward the light
+- Check if any shape blocks the ray before it reaches the light
+- If blocked, mark the light as being in shadow and skip its contribution
+- Only accumulate color from lights that are not blocked
+
+<details>
+<summary>Click to expand LambertianShader shadow ray code</summary>
 
 ```cpp
 // ...
@@ -254,9 +290,20 @@ vec3 LambertianShader::rayColor(const HitStruct &hit,
 }
 ```
 
+</details>
+
 ---
 
 ### MirrorShader.cpp (recursive reflection)
+
+**Steps:**
+- Compute the reflected ray direction using the formula: $r = d - 2(d \cdot n)n$
+- Offset the ray origin slightly along the surface normal to avoid self-intersection
+- Recursively trace the reflected ray with decreased depth
+- Return the color from the reflected path
+
+<details>
+<summary>Click to expand MirrorShader.cpp</summary>
 
 ```cpp
 #include "MirrorShader.h"
@@ -281,9 +328,20 @@ vec3 MirrorShader::rayColor(const HitStruct &hit,
 }
 ```
 
+</details>
+
 ---
 
 ### DiffuseShader.cpp
+
+**Steps:**
+- Generate a random direction in a unit sphere to simulate diffuse scattering
+- Combine the random direction with the surface normal to bias scatter direction toward the normal
+- Create a scattered ray from the hit point in the new direction
+- Recursively trace the scattered ray and multiply the result by the material's diffuse reflectance color
+
+<details>
+<summary>Click to expand DiffuseShader.cpp</summary>
 
 ```cpp
 #include "DiffuseShader.h"
@@ -338,9 +396,21 @@ vec3 DiffuseShader::rayColor(const HitStruct &hit,
 
 ```
 
+</details>
+
 ---
 
 ### Camera.h / PerspectiveCamera.cpp (If you only have generateRay methods with int arguments, you might need some way for it to accept float arguments for anti-aliasing)
+
+**Steps:**
+- Add an overloaded `generateRay` method that accepts floating-point pixel coordinates
+- This allows sub-pixel sampling for anti-aliasing
+- Use the float coordinates to compute ray direction with sub-pixel precision
+
+**Camera.h header:**
+
+<details>
+<summary>Click to expand Camera.h</summary>
 
 ```cpp
 class Camera
@@ -351,7 +421,15 @@ public:
 };
 ```
 
+</details>
+
+**PerspectiveCamera.cpp implementation:**
+
+<details>
+<summary>Click to expand PerspectiveCamera.cpp</summary>
+
 ```cpp
+// ...
 ray PerspectiveCamera::generateRay(float i, float j)
 {
   float u = left + (right - left) * i / (float)nx;
@@ -362,9 +440,23 @@ ray PerspectiveCamera::generateRay(float i, float j)
 }
 ```
 
+</details>
+
 ---
 
 ### fbMain.cpp (anti-aliasing + recursion)
+
+**Steps:**
+- Set up the scene with multiple shapes, each with a different shader
+- Create point lights at strategic positions
+- For each pixel, perform stratified sampling: divide the pixel into a grid (e.g., 4x4)
+- Add random jitter to each sample position within its grid cell for better distribution
+- Trace a ray for each sub-pixel sample with a limited recursion depth
+- Average all sub-pixel colors to get the final pixel color
+- Export the final framebuffer to a PNG image
+
+<details>
+<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 // libraries and headers
@@ -452,6 +544,8 @@ int main(int argc, char *argv[])
   return 0;
 }
 ```
+
+</details>
 
 ---
 

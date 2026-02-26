@@ -121,6 +121,13 @@ The following are example snippets matching this week’s structure. Your design
 
 ### HitStruct.h
 
+**Steps:**
+- Store the parameter `t`, intersection point, surface normal, and a pointer to the intersected shape
+- This struct is passed from intersection methods to shaders
+
+<details>
+<summary>Click to expand HitStruct.h</summary>
+
 ```cpp
 #pragma once
 #include "vec3.h"
@@ -136,9 +143,20 @@ struct HitStruct
 };
 ```
 
+</details>
+
 ---
 
 ### Shader.h
+
+**Steps:**
+- Define a base `Shader` class with a pure virtual `rayColor` method
+- This method receives the hit information, list of lights, and should return the computed color
+- Different shader implementations will override this method
+- Check [week6](week6.md) for the updated Shader class that also takes the ray and shapes parameters, along with depth that would be needed for that week
+
+<details>
+<summary>Click to expand Shader.h</summary>
 
 ```cpp
 #pragma once
@@ -156,7 +174,16 @@ public:
 };
 ```
 
+</details>
+
 ### NormalShader.h
+
+**Steps:**
+- Create a concrete shader class that inherits from `Shader`
+- Override the `rayColor` method to visualize surface normals
+
+<details>
+<summary>Click to expand NormalShader.h</summary>
 
 ```cpp
 #pragma once
@@ -172,7 +199,16 @@ public:
 };
 ```
 
+</details>
+
 ### NormalShader.cpp
+
+**Steps:**
+- Rescale the normal from the range [-1, 1] to [0, 1] by adding 1 and multiplying by 0.5
+- This allows normals to be visualized as RGB colors
+
+<details>
+<summary>Click to expand NormalShader.cpp</summary>
 
 ```cpp
 #include "NormalShader.h"
@@ -184,7 +220,16 @@ vec3 NormalShader::rayColor(const HitStruct& hit, const std::vector<std::shared_
 }
 ```
 
+</details>
+
 ### LambertianShader.h
+
+**Steps:**
+- Create a shader class that implements Lambertian shading
+- This shader computes color based on the angle between the surface normal and light direction
+
+<details>
+<summary>Click to expand LambertianShader.h</summary>
 
 ```cpp
 #pragma once
@@ -196,7 +241,20 @@ public:
 };
 ```
 
+</details>
+
 ### LambertianShader.cpp
+
+**Steps:**
+- For each light, compute the light direction from the hit point toward the light
+- Calculate the diffuse coefficient as $\max(0, \mathbf{n} \cdot \mathbf{l})$
+- Accumulate the light contribution: diffuse coefficient * light color * light intensity
+- Multiply the accumulated lighting by the material color
+- Clamp the result to [0, 1] to ensure valid RGB values
+
+<details>
+<summary>Click to expand LambertianShader.cpp</summary>
+
 ```cpp
 #include "LambertianShader.h"
 #include "Shape.h"
@@ -225,7 +283,17 @@ vec3 LambertianShader::rayColor(const HitStruct& hit, const std::vector<std::sha
 }
 ```
 
+</details>
+
 ### BlinnPhongShader.h
+
+**Steps:**
+- Create a shader class that implements Blinn-Phong shading
+- Store the eye/camera position for computing view direction
+- Provide a setter to update the eye position
+
+<details>
+<summary>Click to expand BlinnPhongShader.h</summary>
 
 ```cpp
 #pragma once
@@ -242,7 +310,22 @@ private:
 };
 ```
 
+</details>
+
 ### BlinnPhongShader.cpp
+
+**Steps:**
+- Set material coefficients: `kd` for diffuse, `ks` for specular, and `p` for shininess exponent
+- Compute the view direction from the hit point toward the eye position
+- For each light:
+  - Calculate the light direction and the half-vector (bisector between light and view)
+  - Compute diffuse term: $k_d \cdot \max(0, \mathbf{n} \cdot \mathbf{l}) \cdot I_{light}$
+  - Compute specular term: $k_s \cdot \max(0, \mathbf{n} \cdot \mathbf{h})^p \cdot I_{light}$
+  - Combine diffuse and specular contributions
+- Clamp the final color to [0, 1]
+
+<details>
+<summary>Click to expand BlinnPhongShader.cpp</summary>
 
 ```cpp
 #include "BlinnPhongShader.h"
@@ -291,9 +374,19 @@ vec3 BlinnPhongShader::rayColor(const HitStruct& hit, const std::vector<std::sha
 }
 ```
 
+</details>
+
 ---
 
 ### PointLight.h
+
+**Steps:**
+- Create a simple `PointLight` class that stores position, color, and intensity
+- Provide getter methods to access these properties
+- Use default intensity of 1.0f
+
+<details>
+<summary>Click to expand PointLight.h</summary>
 
 ```cpp
 #pragma once
@@ -316,9 +409,19 @@ private:
 };
 ```
 
+</details>
+
 ---
 
 ### Shape.h (updated)
+
+**Steps:**
+- Add a pure virtual `getShader` method to the base `Shape` class
+- This allows each shape to have an associated shader
+- Include forward declaration for the `Shader` class
+
+<details>
+<summary>Click to expand Shape.h (updated)</summary>
 
 ```cpp
 #pragma once
@@ -338,7 +441,17 @@ public:
 };
 ```
 
+</details>
+
 ### Sphere.h (you can also use a setter instead of modifying the constructor)
+
+**Steps:**
+- Create multiple constructor overloads for flexibility (including one with shader), you could also use setters
+- Store center position, radius, color, and shader pointer
+- Implement the `getShader` method to return the associated shader
+
+<details>
+<summary>Click to expand Sphere.h</summary>
 
 ```cpp
 #pragma once
@@ -368,7 +481,17 @@ private:
 };
 ```
 
+</details>
+
 ### Sphere.cpp
+
+**Steps:**
+- Update the ray-sphere intersection
+- For valid intersections, compute the surface normal as the normalized vector from center to hit point
+- Return the shader pointer in the `getShader` method
+
+<details>
+<summary>Click to expand Sphere.cpp</summary>
 
 ```cpp
 #include "Sphere.h"
@@ -400,9 +523,26 @@ std::shared_ptr<Shader> Sphere::getShader() const
 }
 ```
 
+</details>
+
 ### Same for Triangle.h and Triangle.cpp
 
 ### fbMain.cpp
+
+**Steps:**
+- Include all necessary headers for shaders, shapes, and lights
+- Implement `computeRayColor` function:
+  - Find the closest shape intersection along the ray
+  - If a shape is hit, retrieve its shader and call its `rayColor` method
+  - If no shader is attached, use `NormalShader` as a fallback
+  - Return background gradient if no intersection
+- Create the scene with three spheres, each with a different shader
+- Set up one point light at a strategic position
+- For each pixel, generate a ray and compute its color
+- Export the final framebuffer to a PNG image
+
+<details>
+<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 #include <iostream>
@@ -500,6 +640,8 @@ int main(int argc, char *argv[])
   return 0;
 }
 ```
+
+</details>
 
 ---
 

@@ -118,6 +118,14 @@ The following are example snippets matching this week’s structure. Your design
 
 ### HitStruct.h (to be updated later)
 
+**Steps:**
+- Create a struct to store ray intersection data
+- Store the ray parameter `t`, the intersection point, and a pointer to the intersected shape
+- This struct is returned from shape intersection methods to the renderer
+
+<details>
+<summary>Click to expand HitStruct.h</summary>
+
 ```cpp
 #include "vec3.h"
 
@@ -131,9 +139,20 @@ struct HitStruct
 };
 ```
 
+</details>
+
 ---
 
 ### Shape.h
+
+**Steps:**
+- Define an abstract base class for all shapes in the scene
+- Declare a pure virtual `intersect` method that tests ray-shape intersection
+- Declare a pure virtual `getColor` method to return the shape's color (P.S. We will re-structure the class in the next weeks and this will be removed later)
+- Include necessary headers for ray and HitStruct
+
+<details>
+<summary>Click to expand Shape.h</summary>
 
 ```cpp
 #pragma once
@@ -150,9 +169,20 @@ public:
 };
 ```
 
+</details>
+
 ---
 
 ### Sphere.h
+
+**Steps:**
+- Create a `Sphere` class that inherits from `Shape`
+- Store the sphere's center position, radius, and color (To be updated in the later weeks)
+- Provide multiple constructor overloads for flexibility (default, with center/radius, with color)
+- Implement the `intersect` and `getColor` virtual methods
+
+<details>
+<summary>Click to expand Sphere.h</summary>
 
 ```cpp
 #pragma once
@@ -177,7 +207,21 @@ private:
 };
 ```
 
+</details>
+
 ### Sphere.cpp
+
+**Steps:**
+- Compute the ray-sphere intersection using the quadratic formula
+- Vector `oc` = ray origin minus sphere center
+- Coefficients: $a = direction \cdot direction$, $b = 2 \times oc \cdot direction$, $c = (oc \cdot oc) - radius ^ 2$
+- Check discriminant: if negative, no intersection
+- Compute both intersection parameters (t1 and t2)
+- Return the closest intersection that is within the valid `[t_min, t_max]` range
+- Store the intersection point and shape reference in the HitStruct
+
+<details>
+<summary>Click to expand Sphere.cpp</summary>
 
 ```cpp
 #include "Sphere.h"
@@ -226,7 +270,19 @@ vec3 Sphere::getColor() const
 }
 ```
 
+</details>
+
 ### Triangle.h
+
+**Steps:**
+- Create a `Triangle` class that inherits from `Shape`
+- Store the three vertices and the triangle's color
+- Provide multiple constructor overloads for flexibility
+- Implement the `intersect` and `getColor` virtual methods
+
+<details>
+<summary>Click to expand Triangle.h</summary>
+
 ```cpp
 #pragma once
 
@@ -248,7 +304,20 @@ private:
 };
 ```
 
+</details>
+
 ### Triangle.cpp
+
+**Steps:**
+- Set up edge vectors and ray parameters (a-l represent vector components)
+- Compute intermediate values for the algorithm (ei_hf, gf_id, dh_eg, M)
+- Calculate the intersection parameter `t` and barycentric coordinates `beta` and `gamma`
+- Check if `t` is within the valid range `[t_min, t_max]`
+- Check if the barycentric coordinates are valid (inside or on the triangle boundary)
+- Store the intersection point, parameter `t`, and shape reference in HitStruct if hit
+
+<details>
+<summary>Click to expand Triangle.cpp</summary>
 
 ```cpp
 #include "Triangle.h"
@@ -312,9 +381,24 @@ vec3 Triangle::getColor() const
 }
 ```
 
+</details>
+
 ---
 
 ### fbMain.cpp (updated)
+
+**Steps:**
+- Implement `computeRayColor` function:
+  - Iterate through all shapes to find ray intersections
+  - Track the closest hit by updating `t_max` as closer intersections are found
+  - Return the shape's color if an intersection is found
+  - Return a gradient background color if no intersection occurs
+- Create a camera and scene setup with shapes
+- For each pixel, generate a ray from the camera and compute its color
+- Store the result in the framebuffer and export to PNG
+
+<details>
+<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 #include <iostream>
@@ -412,6 +496,8 @@ int main(int argc, char *argv[])
   return 0;
 }
 ```
+
+</details>
 
 ---
 
