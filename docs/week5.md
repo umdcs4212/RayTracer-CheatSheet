@@ -125,8 +125,6 @@ The following are example snippets matching this week’s structure. Your design
 - Store the parameter `t`, intersection point, surface normal, and a pointer to the intersected shape
 - This struct is passed from intersection methods to shaders
 
-<details>
-<summary>Click to expand HitStruct.h</summary>
 
 ```cpp
 #pragma once
@@ -143,7 +141,6 @@ struct HitStruct
 };
 ```
 
-</details>
 
 ---
 
@@ -155,8 +152,6 @@ struct HitStruct
 - Different shader implementations will override this method
 - Check [week6](week6.md) for the updated Shader class that also takes the ray and shapes parameters, along with depth that would be needed for that week
 
-<details>
-<summary>Click to expand Shader.h</summary>
 
 ```cpp
 #pragma once
@@ -174,7 +169,6 @@ public:
 };
 ```
 
-</details>
 
 ### NormalShader.h
 
@@ -182,8 +176,6 @@ public:
 - Create a concrete shader class that inherits from `Shader`
 - Override the `rayColor` method to visualize surface normals
 
-<details>
-<summary>Click to expand NormalShader.h</summary>
 
 ```cpp
 #pragma once
@@ -199,7 +191,6 @@ public:
 };
 ```
 
-</details>
 
 ### NormalShader.cpp
 
@@ -207,8 +198,6 @@ public:
 - Rescale the normal from the range [-1, 1] to [0, 1] by adding 1 and multiplying by 0.5
 - This allows normals to be visualized as RGB colors
 
-<details>
-<summary>Click to expand NormalShader.cpp</summary>
 
 ```cpp
 #include "NormalShader.h"
@@ -220,7 +209,6 @@ vec3 NormalShader::rayColor(const HitStruct& hit, const std::vector<std::shared_
 }
 ```
 
-</details>
 
 ### LambertianShader.h
 
@@ -228,8 +216,6 @@ vec3 NormalShader::rayColor(const HitStruct& hit, const std::vector<std::shared_
 - Create a shader class that implements Lambertian shading
 - This shader computes color based on the angle between the surface normal and light direction
 
-<details>
-<summary>Click to expand LambertianShader.h</summary>
 
 ```cpp
 #pragma once
@@ -241,7 +227,6 @@ public:
 };
 ```
 
-</details>
 
 ### LambertianShader.cpp
 
@@ -252,8 +237,6 @@ public:
 - Multiply the accumulated lighting by the material color
 - Clamp the result to [0, 1] to ensure valid RGB values
 
-<details>
-<summary>Click to expand LambertianShader.cpp</summary>
 
 ```cpp
 #include "LambertianShader.h"
@@ -283,7 +266,6 @@ vec3 LambertianShader::rayColor(const HitStruct& hit, const std::vector<std::sha
 }
 ```
 
-</details>
 
 ### BlinnPhongShader.h
 
@@ -292,8 +274,6 @@ vec3 LambertianShader::rayColor(const HitStruct& hit, const std::vector<std::sha
 - Store the eye/camera position for computing view direction
 - Provide a setter to update the eye position
 
-<details>
-<summary>Click to expand BlinnPhongShader.h</summary>
 
 ```cpp
 #pragma once
@@ -310,7 +290,6 @@ private:
 };
 ```
 
-</details>
 
 ### BlinnPhongShader.cpp
 
@@ -324,8 +303,6 @@ private:
   - Combine diffuse and specular contributions
 - Clamp the final color to [0, 1]
 
-<details>
-<summary>Click to expand BlinnPhongShader.cpp</summary>
 
 ```cpp
 #include "BlinnPhongShader.h"
@@ -374,7 +351,6 @@ vec3 BlinnPhongShader::rayColor(const HitStruct& hit, const std::vector<std::sha
 }
 ```
 
-</details>
 
 ---
 
@@ -385,8 +361,6 @@ vec3 BlinnPhongShader::rayColor(const HitStruct& hit, const std::vector<std::sha
 - Provide getter methods to access these properties
 - Use default intensity of 1.0f
 
-<details>
-<summary>Click to expand PointLight.h</summary>
 
 ```cpp
 #pragma once
@@ -409,7 +383,6 @@ private:
 };
 ```
 
-</details>
 
 ---
 
@@ -420,8 +393,6 @@ private:
 - This allows each shape to have an associated shader
 - Include forward declaration for the `Shader` class
 
-<details>
-<summary>Click to expand Shape.h (updated)</summary>
 
 ```cpp
 #pragma once
@@ -441,7 +412,6 @@ public:
 };
 ```
 
-</details>
 
 ### Sphere.h (you can also use a setter instead of modifying the constructor)
 
@@ -450,8 +420,6 @@ public:
 - Store center position, radius, color, and shader pointer
 - Implement the `getShader` method to return the associated shader
 
-<details>
-<summary>Click to expand Sphere.h</summary>
 
 ```cpp
 #pragma once
@@ -481,7 +449,6 @@ private:
 };
 ```
 
-</details>
 
 ### Sphere.cpp
 
@@ -490,8 +457,6 @@ private:
 - For valid intersections, compute the surface normal as the normalized vector from center to hit point
 - Return the shader pointer in the `getShader` method
 
-<details>
-<summary>Click to expand Sphere.cpp</summary>
 
 ```cpp
 #include "Sphere.h"
@@ -523,7 +488,6 @@ std::shared_ptr<Shader> Sphere::getShader() const
 }
 ```
 
-</details>
 
 ### Same for Triangle.h and Triangle.cpp
 
@@ -541,8 +505,6 @@ std::shared_ptr<Shader> Sphere::getShader() const
 - For each pixel, generate a ray and compute its color
 - Export the final framebuffer to a PNG image
 
-<details>
-<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 #include <iostream>
@@ -641,7 +603,6 @@ int main(int argc, char *argv[])
 }
 ```
 
-</details>
 
 ---
 

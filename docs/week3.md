@@ -76,9 +76,6 @@ The following are example snippets matching this week’s structure. Your design
 - Implement the `at(t)` method to compute a point along the ray: $P(t) = O + t \cdot D$
 - Provide getter methods for origin and direction
 
-<details>
-<summary>Click to expand ray.h</summary>
-
 ```cpp
 #ifndef RAY_H
 #define RAY_H
@@ -106,8 +103,6 @@ class ray {
 #endif
 ```
 
-</details>
-
 ---
 
 ### Camera.h
@@ -119,9 +114,6 @@ class ray {
 - Store the number of pixels in x and y directions (`nx`, `ny`)
 - Declare a pure virtual `generateRay(i, j)` method that subclasses must implement
 - Provide multiple constructors with different parameter combinations
-
-<details>
-<summary>Click to expand Camera.h</summary>
 
 ```cpp
 #pragma once
@@ -155,8 +147,6 @@ protected:
 };
 ```
 
-</details>
-
 ---
 
 ### Camera.cpp
@@ -170,9 +160,6 @@ protected:
   - Compute the `W` basis vector as the negative unit vector of the view direction
   - Handle the edge case where the up vector is nearly parallel to the view direction
   - Compute `U` and `V` using cross products to form an orthonormal basis
-
-<details>
-<summary>Click to expand Camera.cpp</summary>
 
 ```cpp
 #include "Camera.h"
@@ -225,8 +212,6 @@ Camera::Camera(vec3 position, vec3 viewDir, vec3 upDir, float focal_length, floa
 }
 ```
 
-</details>
-
 ---
 
 ### PerspectiveCamera.h
@@ -236,9 +221,6 @@ Camera::Camera(vec3 position, vec3 viewDir, vec3 upDir, float focal_length, floa
 - Store the left, right, top, and bottom bounds of the image plane
 - Provide multiple constructors matching the parent class variants
 - Override the `generateRay(i, j)` method to compute rays through the image plane
-
-<details>
-<summary>Click to expand PerspectiveCamera.h</summary>
 
 ```cpp
 #pragma once
@@ -259,8 +241,6 @@ private:
 };
 ```
 
-</details>
-
 ### PerspectiveCamera.cpp
 
 **Steps:**
@@ -273,9 +253,6 @@ private:
   - Map pixel coordinates to world space using the camera's basis vectors
   - Compute ray direction: $\vec{d} = -f \cdot W + u \cdot U + v \cdot V$
   - Return a ray with the camera position as origin and the computed direction
-
-<details>
-<summary>Click to expand PerspectiveCamera.cpp</summary>
 
 ```cpp
 #include "PerspectiveCamera.h"
@@ -317,8 +294,6 @@ ray PerspectiveCamera::generateRay(int i, int j)
 }
 ```
 
-</details>
-
 ---
 
 ### fbMain.cpp
@@ -335,9 +310,6 @@ ray PerspectiveCamera::generateRay(int i, int j)
   - Compute the color for each ray
   - Store the result in the framebuffer
   - Export the framebuffer to a PNG image
-
-<details>
-<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 #include <iostream>
@@ -376,8 +348,6 @@ int main(int argc, char *argv[])
   return 0;
 }
 ```
-
-</details>
 
 ---
 

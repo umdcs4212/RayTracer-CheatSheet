@@ -127,8 +127,6 @@ Your design can differ, as long as it meets the Week 6 checklist.
 - Add a `depth` parameter to control recursion depth
 - This allows shaders to spawn recursive rays and access the scene for computations
 
-<details>
-<summary>Click to expand Shader.h</summary>
 
 ```cpp
 //...
@@ -144,7 +142,6 @@ public:
 };
 ```
 
-</details>
 
 ---
 
@@ -155,8 +152,6 @@ public:
 
 **RayTracer.h header:**
 
-<details>
-<summary>Click to expand RayTracer.h</summary>
 
 ```cpp
 #pragma once
@@ -175,12 +170,9 @@ vec3 computeRayColor(const ray &r,
   int depth);
 ```
 
-</details>
 
 **RayTracer.cpp**
 
-<details>
-<summary>Click to expand RayTracer.cpp</summary>
 
 ```cpp
 #include "RayTracer.h"
@@ -234,7 +226,6 @@ vec3 computeRayColor(const ray &r,
 }
 ```
 
-</details>
 
 ---
 
@@ -246,8 +237,6 @@ vec3 computeRayColor(const ray &r,
 - If blocked, mark the light as being in shadow and skip its contribution
 - Only accumulate color from lights that are not blocked
 
-<details>
-<summary>Click to expand LambertianShader shadow ray code</summary>
 
 ```cpp
 // ...
@@ -290,7 +279,6 @@ vec3 LambertianShader::rayColor(const HitStruct &hit,
 }
 ```
 
-</details>
 
 ---
 
@@ -302,8 +290,6 @@ vec3 LambertianShader::rayColor(const HitStruct &hit,
 - Recursively trace the reflected ray with decreased depth
 - Return the color from the reflected path
 
-<details>
-<summary>Click to expand MirrorShader.cpp</summary>
 
 ```cpp
 #include "MirrorShader.h"
@@ -328,7 +314,6 @@ vec3 MirrorShader::rayColor(const HitStruct &hit,
 }
 ```
 
-</details>
 
 ---
 
@@ -340,8 +325,6 @@ vec3 MirrorShader::rayColor(const HitStruct &hit,
 - Create a scattered ray from the hit point in the new direction
 - Recursively trace the scattered ray and multiply the result by the material's diffuse reflectance color
 
-<details>
-<summary>Click to expand DiffuseShader.cpp</summary>
 
 ```cpp
 #include "DiffuseShader.h"
@@ -396,7 +379,6 @@ vec3 DiffuseShader::rayColor(const HitStruct &hit,
 
 ```
 
-</details>
 
 ---
 
@@ -409,8 +391,6 @@ vec3 DiffuseShader::rayColor(const HitStruct &hit,
 
 **Camera.h header:**
 
-<details>
-<summary>Click to expand Camera.h</summary>
 
 ```cpp
 class Camera
@@ -421,12 +401,9 @@ public:
 };
 ```
 
-</details>
 
 **PerspectiveCamera.cpp implementation:**
 
-<details>
-<summary>Click to expand PerspectiveCamera.cpp</summary>
 
 ```cpp
 // ...
@@ -440,7 +417,6 @@ ray PerspectiveCamera::generateRay(float i, float j)
 }
 ```
 
-</details>
 
 ---
 
@@ -455,8 +431,6 @@ ray PerspectiveCamera::generateRay(float i, float j)
 - Average all sub-pixel colors to get the final pixel color
 - Export the final framebuffer to a PNG image
 
-<details>
-<summary>Click to expand fbMain.cpp</summary>
 
 ```cpp
 // libraries and headers
@@ -545,7 +519,6 @@ int main(int argc, char *argv[])
 }
 ```
 
-</details>
 
 ---
 
