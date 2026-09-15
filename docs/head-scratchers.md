@@ -252,4 +252,4 @@ Catch2's own CLI (tag filters, `--list-tests`, `--success`, etc.):
 
 ---
 
-[Home](index.md)
+[Home](index.md) | [Week 2](week2.md)

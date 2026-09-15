@@ -5,4 +5,5 @@ Use this site to check what your ray tracer should look like at the end of each 
 ## Weeks
 - [Head-scratchers](head-scratchers.md)
 - Week 1 - Cloning the repo and configuring the build commands
+- [Week 2 - vec3 + Framebuffer + Export a PNG](week2.md)
 
